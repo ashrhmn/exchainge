@@ -4,6 +4,7 @@ const { ethers } = require("hardhat");
 
 describe("MyTokens", async function() {
     let myTokens = null
+    let swapTokens = null
     let accounts = []
     let deployer = null
     let tokenSupplies = []
@@ -39,7 +40,10 @@ describe("MyTokens", async function() {
             // console.log(tokens)
 
         expect(tokens.length).to.equal(tokenNames.length).to.equal(tokenSupplies.length)
+            const SwapTokens = await ethers.getContractFactory("SwapTokens");
+            swapTokens = await SwapTokens.deploy("test swapping");
 
+            await swapTokens.deployed();    
     })
     it("Should have balance as defined", async function() {
 
@@ -65,4 +69,41 @@ describe("MyTokens", async function() {
             expect(weiToEth(tokenToEquivalentWei, 8)).to.be.approximately(amount / price, 1e-4)
         }
     })
+    it("Should Return All Tokens", async () => {
+        const Alltokens = await myTokens.getTokens()
+        console.log(Alltokens);
+
+    
+    })
+    
+
+    it("Should deploy with name", async () => {
+        expect(await swapTokens.name()).to.equal("test swapping");
+        console.log(swapTokens.address);
+    })
+    it("Should Buy", async () => {
+        const buy = await myTokens.buyToken(1, 10000,accounts[1].address, [])
+        await buy.wait()
+        expect(await balanceOfFn(accounts[1].address, 1)).to.equal("10000")
+        //console.log(balanceOfFn(deployer.address, 0));
+    })
+    it("Should give the balance", async () => {
+        const balance = await myTokens.balanceOf(accounts[1].address, 1)
+        console.log(balance);
+    })
+    it("Shoult return the comparism value", async () => { 
+        const token0 = await myTokens.tokenToEther(0,1);
+        //const token1 = await myTokens.tokenToEther(1);
+        //const res = token1 / token0;
+        //console.log(Math.round(res,0));
+        console.log(token0);
+    })
+    it("SHould Swap Token", async () => {
+        //myTokens._setApproveforAll(accounts[1].address, true);
+        const swap = await myTokens.swapToken(0, 1, 500, accounts[1].address, [])
+        await swap.wait()
+        
+        console.log(balanceOfFn(accounts[1].address, 0));
+    })
 });
+

@@ -7,6 +7,7 @@ import "hardhat/console.sol";
 
 contract MyTokens is ERC1155 {
     using SafeMath for uint256;
+    uint256 rate = 100;
     struct Token {
         string name;
         uint256 supply;
@@ -50,5 +51,61 @@ contract MyTokens is ERC1155 {
 
     function getTokens() public view returns (Token[] memory) {
         return tokens;
+    }
+
+    function buyToken(
+        uint256 _id,
+        uint256 _amount,
+        address _address
+    ) public payable {
+        uint256 tokenAmount = _amount * rate;
+        require(tokenAmount > 0, "You must buy at least 1 token");
+        require(
+            tokenAmount <= tokens[_id].supply,
+            "You can't buy more than the supply"
+        );
+        safeTransferFrom(msg.sender, _address, _id, _amount, "");
+    }
+
+    function checkBalance(address _owner, uint256 _id)
+        public
+        view
+        returns (uint256)
+    {
+        return balanceOf(_owner, _id);
+    }
+
+    function swapToken(
+        uint256 _id1,
+        uint256 _id2,
+        uint256 _amountOfId1,
+        address _add
+    ) public payable {
+        uint256 rate1 = tokenEquivalenceOfSingleEther[_id1].div(
+            tokenEquivalenceOfSingleEther[_id2]
+        );
+        if (rate == 0) {
+            rate = 1;
+        }
+        uint256 rate2 = tokenEquivalenceOfSingleEther[_id2].div(
+            tokenEquivalenceOfSingleEther[_id1]
+        );
+        uint256 tokenAmount1 = _amountOfId1 * rate1;
+        uint256 tokenAmount2 = _amountOfId1 * rate2;
+        // _setApprovalForAll(msg.sender,_add, true);
+        safeTransferFrom(msg.sender, _add, _id1, tokenAmount1, "");
+        //safeTransferFrom(_add, msg.sender, _id2, tokenAmount2, "");
+    }
+
+    function tokenToEther(uint256 _id1, uint256 _id2)
+        public
+        view
+        returns (uint256)
+    {
+        // uint256 rate = tokenEquivalenceOfSingleEther[_id1].div(tokenEquivalenceOfSingleEther[_id2]);
+        //     if(rate == 0){
+        //         rate = 1;
+        //     }
+        //     return rate;
     }
 }
