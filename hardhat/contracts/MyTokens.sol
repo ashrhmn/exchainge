@@ -84,17 +84,21 @@ contract MyTokens is ERC1155 {
         uint256 rate1 = tokenEquivalenceOfSingleEther[_id1].div(
             tokenEquivalenceOfSingleEther[_id2]
         );
-        if (rate == 0) {
-            rate = 1;
+        if (rate1 == 0) {
+            rate1 = 1;
         }
         uint256 rate2 = tokenEquivalenceOfSingleEther[_id2].div(
             tokenEquivalenceOfSingleEther[_id1]
         );
-        uint256 tokenAmount1 = _amountOfId1 * rate1;
+        uint256 tokenAmount1 = _amountOfId1.mul(rate1);
         uint256 tokenAmount2 = _amountOfId1 * rate2;
+        console.log(tokenAmount1);
+        console.log("hehe");
         // _setApprovalForAll(msg.sender,_add, true);
+        //setApprovalForAll(_add, true);
         safeTransferFrom(msg.sender, _add, _id1, tokenAmount1, "");
         //safeTransferFrom(_add, msg.sender, _id2, tokenAmount2, "");
+        
     }
 
     function tokenToEther(uint256 _id1, uint256 _id2)

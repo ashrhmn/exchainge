@@ -100,10 +100,16 @@ describe("MyTokens", async function() {
     })
     it("SHould Swap Token", async () => {
         //myTokens._setApproveforAll(accounts[1].address, true);
-        const swap = await myTokens.swapToken(0, 1, 500, accounts[1].address, [])
+        const swap = await myTokens.swapToken(0, 1, 500, accounts[1].address)
         await swap.wait()
         
-        console.log(balanceOfFn(accounts[1].address, 0));
+        console.log(await balanceOfFn(accounts[1].address, 0));
+        console.log(await balanceOfFn(accounts[0].address, 0));
     })
+        it("Should give the balance", async () => {
+        const balance = await myTokens.balanceOf(accounts[1].address, 1)
+        console.log(balance);
+        })
+    
 });
 
